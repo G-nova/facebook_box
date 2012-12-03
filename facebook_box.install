@@ -1,0 +1,9 @@
+<?php
+function facebook_box_uninstall() {
+  variable_del('facebook_box_boxfanpageurl');
+  variable_del('facebook_box_boxwidth');
+  variable_del('facebook_box_boxshowfaces');
+  variable_del('facebook_box_boxstream');
+  variable_del('facebook_box_boxheader');
+  variable_del('facebook_box_boxbordercolor');
+}

@@ -1,0 +1,116 @@
+<?php
+/**
+ * Implements hook_menu().
+ *
+ * Define menu items and page callbacks.
+ */
+function facebook_box_menu() {
+  $items['admin/config/services/facebook_box'] = array(
+    'title' => 'Facebook box',
+    'description' => 'Configure Facebook fan box.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('facebook_box_settings_form'),
+    'access arguments' => array('administer facebook box'),
+    'file' => 'facebook_box.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+  );
+
+  return $items;
+
+}
+
+/**
+ * Implements hook_permission().
+ *
+ * Define user permissions.
+ *
+ */
+function facebook_box_permission() {
+  return array(
+    'administer facebook box' =>  array(
+      'title' => t('Administer facebook box'),
+      'description' => t('Settings for facebook box.'),
+    ),
+  );
+
+}
+
+/**
+ * Implements hook_block_info().
+ *
+ * @see hook_block_configure()
+ * @see hook_block_save()
+ * @see hook_block_view()
+ * @see hook_block_info_alter()
+ *
+ *
+ */
+function facebook_box_block_info() {
+  // This example comes from node.module.
+  $blocks['facebook_box_fan'] = array(
+    'info' => t('Facebook Fan box'),
+    'cache' => DRUPAL_CACHE_GLOBAL
+  );
+
+  return $blocks;
+
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * Return a rendered or renderable view of a block.
+ *
+ * @see hook_block_info()
+ * @see hook_block_view_alter()
+ * @see hook_block_view_MODULE_DELTA_alter()
+ *
+ *
+ */
+function facebook_box_block_view($delta = '') {
+  // This example is adapted from node.module.
+  $block = array();
+
+  switch ($delta) {
+    case 'facebook_box_fan':
+      $block['content'] = array(
+        '#theme' => 'facebook_box_fan',
+        '#attached' => array(
+          'js' => array(
+            drupal_get_path('module', 'facebook_box') . '/facebook_box.js',
+          )
+        ),
+        '#contextual_links' => array(
+          'facebook_box' =>  array(
+            'admin/config/services/facebook_box', array(),
+          ),
+        ),
+      );
+      break;
+  }
+  return $block;
+
+}
+
+/**
+ * Implements hook_theme().
+ */
+function facebook_box_theme($existing, $type, $theme, $path) {
+  return array(
+    'facebook_box_fan' => array(
+      'variables' => array('element' => NULL),
+    ),
+  );
+}
+
+function theme_facebook_box_fan ($vars) {
+  $width = variable_get('facebook_box_boxwidth', '');
+  $height = variable_get('facebook_box_boxheight', '');
+  (variable_get('facebook_box_boxshowfaces',''))?$showfaces = 'true':$showfaces = 'false';
+  (variable_get('facebook_box_boxstream',''))?$stream = 'true':$stream = 'false';
+  (variable_get('facebook_box_boxheader',''))?$header = 'true':$header = 'false';
+  (!empty($width))?$width = 'data-width="' . $width . '"':$width = '';
+  (!empty($height))?$height = 'data-height="' . $height . '"':$height = '';
+  return '<div id="fb-root"></div><div class="fb-like-box" data-href="' . variable_get('facebook_box_boxfanpageurl','') . '" ' . $width . ' ' . $height . ' data-show-faces="' . $showfaces . '" data-stream="' . $stream . '" data-header="' . $header . '" data-border-color="' . variable_get('facebook_box_boxbordercolor','#ffffff') . '"></div>';
+}
