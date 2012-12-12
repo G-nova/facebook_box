@@ -2,4 +2,4 @@ name = "Facebook box"
 description = "Integrate facebook fan box."
 core = "7.x"
 files[] = facebook_box.admin.inc
-configure = admin/config/facebook_box
+configure = admin/config/services/facebook_box
